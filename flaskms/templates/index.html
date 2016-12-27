@@ -1,0 +1,40 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Information{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <a class="navbar-brand" href="#"> information</a>
+        </div>    
+    </nav>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <h1>Server  information</h1>
+        
+
+      
+        <table class="table table-hover">
+           <tr>
+           <th>id</th>
+           <th>ServerName</th>
+            <th>Activated Timestamp</th>
+            </tr>
+        
+
+           {% for row in kms %}
+           <tr>
+	     <td>{{row.id}} </td>
+	     <td>{{row.hostname}} </td>
+	     <td>{{row.date}} </td>
+           </tr>
+        
+           {% endfor %}
+
+        </table>
+    </div>    
+    
+{% endblock %}

@@ -10,3 +10,5 @@ python3.5 -m venv flaskms
 
 pip install --upgrade pip
 pip install flask flask-bootstrap flask-wtf Flask-MySQLdb pymysql uwsgi
+pip install SQLAlchemy
+pip install flask_sqlalchemy
