@@ -1,20 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>KMS info</title>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-<script>
-$(function() {
-	$( ".dtpick" ).datepicker();
-});
-</script>
-</head>
 
-
-<body>
 
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
@@ -36,23 +20,34 @@ $(function() {
 
           <div class="container">
 	  <form method="POST" action="">
-	    {{ form.dt_start(class="dtpick") }}
-	    {{ form.dt_end(class="dtpick") }}
             
+            {{ form.dt_start.label }} {{ form.dt_start(size=16) }}
+	    
+	                {% for error in form.dt_start.errors %}
+			    {{ error }}
+			       {% endfor %}
+                  
+            {{ form.dt_end.label }} {{ form.dt_end(size=16) }}
+                       {% for error in form.dt_end.errors %}
+			    {{ error }}
+	                    {% endfor %}
+
+
+
 	    {{ form.submit() }}   
-	    {{ form.hidden_tag() } 
+	    {{ form.hidden_tag() }} 
 	    </form>	
    
     </div> 
-      
+     
+     {% if dt_start and dt_end %} 
         <table class="table table-hover">
            <tr>
            <th>id</th>
            <th>ServerName</th>
             <th>Activated Timestamp</th>
             </tr>
-        
-
+         
            {% for row in kms %}
            <tr>
 	     <td>{{row.id}} </td>
@@ -61,12 +56,9 @@ $(function() {
            </tr>
         
            {% endfor %}
-
+          
         </table>
     </div>    
-    
+      {% endif %}
 {% endblock %}
 
-</body>
-
-</html>
