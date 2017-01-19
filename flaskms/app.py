@@ -32,37 +32,40 @@ class KmsForm(Form):
 
 
 
+
 @app.route("/", methods=['GET', 'POST'])
 
 def index():
-    
+
     form = KmsForm()
-    kms = []   
-    
+    kms = []
+
     if form.validate_on_submit(): #and form.idc.choices == 1:
         db = MySQLdb.connect("localhost","ferozkhan","amiferoz69","server")
         cur = db.cursor()
         #cur.execute( "SELECT * from kms where date between '%s' and '%s' " %(form.dt_start.data  , form.dt_end.data ) )
         cur.execute ("SELECT  * from kms  where hostname regexp '[1][0-9][0-9][0-9]$' OR hostname LIKE '%%jp2v'  and date between '%s' and '%s' " %(form.dt_start.data , form.dt_end.data)  )
-
+        
         kms = list(cur.fetchall())
-    
-    return render_template('index.html' , form=form , kms=kms)    
-    return '''
-            <html><body>
-	            Hello. <a href="/download">Download</a>
-		            </body></html>
-			            '''
+      
+    return render_template('index.html' , form=form , kms=kms)
 
 @app.route('/download')
-def download():  
-   
-    
+def download():
+
+    global kms
     output = excel.make_response_from_array(kms, 'csv')
     output.headers["Content-Disposition"] = "attachment; filename=export.csv"
     output.headers["Content-type"] = "text/csv"
     return output
-     
+
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0',debug=True)
+
+
+
 
 
 if __name__ == "__main__":
