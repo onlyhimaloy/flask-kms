@@ -1,7 +1,5 @@
 #Flask simple form application
 
-
-from flask import Flask, make_response  
 from flask import Flask,render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
@@ -11,7 +9,7 @@ from wtforms.validators import Required, Length
 from wtforms.fields.html5 import DateField
 import MySQLdb
 
-from flask.ext import excel
+from flask_paginate import Pagination
 
 app = Flask(__name__)
 
@@ -32,10 +30,11 @@ class KmsForm(Form):
 
 
 
-@app.route("/", methods=['GET', 'POST'])
-
-def index():
-    
+@app.route("/", defaults={'page':1}, methods=['GET', 'POST'])
+@app.route('/<int:page>')
+def index(page):
+    perpage=20
+    startat=page*perpage
     form = KmsForm()
     kms = []   
     
@@ -46,24 +45,10 @@ def index():
         cur.execute ("SELECT  * from kms  where hostname regexp '[1][0-9][0-9][0-9]$' OR hostname LIKE '%%jp2v'  and date between '%s' and '%s' " %(form.dt_start.data , form.dt_end.data)  )
 
         kms = list(cur.fetchall())
-    
-    return render_template('index.html' , form=form , kms=kms)    
-    return '''
-            <html><body>
-	            Hello. <a href="/download">Download</a>
-		            </body></html>
-			            '''
-
-@app.route('/download')
-def download():  
-   
-    
-    output = excel.make_response_from_array(kms, 'csv')
-    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
-    output.headers["Content-type"] = "text/csv"
-    return output
      
-
-
+    return render_template('index.html' , form=form , kms=kms)
+     
+     # Else logic
+     #Select  hostname from kms  where hostname regexp '[1][0-9][0-9][0-9]$' OR hostname LIKE '%jp2v' and date between '%s' and '%s' " %(form.dt_start.data , form.dt_end.data);
 if __name__ == "__main__":
     app.run(host='0.0.0.0',debug=True)
