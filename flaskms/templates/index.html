@@ -1,7 +1,7 @@
 <html>
 
 
-<body>
+<body id="app">
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %}Information{% endblock %}
@@ -50,12 +50,16 @@
 	      
 	    </form>	
    
-    </div> 
-     
-       
-                   
-		         <a href="/download">Download</a>
-       
+    </div>
+
+
+      <form id="dw" action="/download" method="get">
+        <input type="hidden" id="dw_s" name="dt_start" value="" />
+        <input type="hidden" id="dw_e" name="dt_end" value="" />
+        <input type="hidden" id="dw_i" name="idc" value="" />
+        <button id="dw">Download</button>
+      </form>
+
         
         <table class="table table-hover">
            <tr>
@@ -77,6 +81,20 @@
 
     
 {% endblock %}
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+  $(function () {
+    $('.dw').on('click', function () {
+      $('#dw_s').val($('#dt_start').val());
+      $('#dw_e').val($('#dt_end').val());
+      $('#dw_i').val($('#idc').val());
+      return false;
+    });
+  })
+</script>
+
+
 
 </body>
 </html>
