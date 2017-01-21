@@ -38,6 +38,7 @@ class KmsForm(Form):
 def index():
 
     form = KmsForm()
+    global kms
     kms = []
 
     if form.validate_on_submit(): #and form.idc.choices == 1:
