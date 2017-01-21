@@ -57,7 +57,7 @@
         <input type="hidden" id="dw_s" name="dt_start" value="" />
         <input type="hidden" id="dw_e" name="dt_end" value="" />
         <input type="hidden" id="dw_i" name="idc" value="" />
-        <button id="dw">Download</button>
+        <button id="dw" class="dw">Download</button>
       </form>
 
         
@@ -89,6 +89,7 @@
       $('#dw_s').val($('#dt_start').val());
       $('#dw_e').val($('#dt_end').val());
       $('#dw_i').val($('#idc').val());
+      $('#dl').submit();
       return false;
     });
   })
