@@ -1,5 +1,5 @@
 #Flask simple form application
-
+#Fetch hostnames and date/time stamp of KMS activation form Even log which has gathered to this DB 
 
 from flask import Flask, make_response  
 from flask import Flask,render_template
@@ -10,6 +10,7 @@ from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import Required, Length
 from wtforms.fields.html5 import DateField
 import MySQLdb
+import time
 
 from flask.ext import excel
 
@@ -46,6 +47,7 @@ def index():
         cur = db.cursor()
         if form.idc.data == '1':
             cur.execute ("SELECT  * from kms  where hostname regexp '[1][0-9][0-9][0-9]$' OR hostname LIKE '%%jp2v'  and date between '%s' and '%s' " %(form.dt_start.data , form.dt_end.data)  )
+
         else:
             cur.execute( "SELECT * from kms where date between '%s' and '%s' " %(form.dt_start.data  , form.dt_end.data ) )
         
@@ -56,9 +58,11 @@ def index():
 @app.route('/download')
 def download():
 
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+
     global kms
     output = excel.make_response_from_array(kms, 'csv')
-    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    output.headers["Content-Disposition"] = "attachment; filename=kms"+timestr+".csv"
     output.headers["Content-type"] = "text/csv"
     return output
 
@@ -68,8 +72,3 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0',debug=True)
 
 
-
-
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0',debug=True)
