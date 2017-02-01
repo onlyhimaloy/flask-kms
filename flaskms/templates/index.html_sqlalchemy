@@ -1,0 +1,102 @@
+<html>
+
+
+<body id="app">
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Information{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <a class="navbar-brand" href="#"> information</a>
+        </div>    
+    </nav>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <h1>Server  information</h1>
+        
+
+          <div class="container">
+	  <form method="POST" action="">
+           
+          {{ form.dt_start.label }} {{ form.dt_start }}   
+	    {% for error in form.dt_start.errors %}
+	    {{ error }}
+            {% endfor %}
+
+          {{ form.dt_end.label }} {{ form.dt_end }}
+             {% for error in form.dt_end.errors %}
+	     {{ error }}
+             {% endfor %}
+	  
+          
+                   <br> <br>
+		         {{form.idc.label}} {{ form.idc }}
+		         {% for error in form.idc.errors %}
+			 {{ error }}
+			 {% endfor %}
+	           <br> <br>
+       
+       
+       	 
+	     {{form.submit()}}
+	     {{ form.hidden_tag() }}
+	    
+	  
+	      
+	    </form>	
+   
+    </div>
+
+
+      <form id="dw" action="/download" method="get">
+        <input type="hidden" id="dw_s" name="dt_start" value="" />
+        <input type="hidden" id="dw_e" name="dt_end" value="" />
+        <input type="hidden" id="dw_i" name="idc" value="" />
+        <button class="dw">Download</button>
+      </form>
+
+        
+        <table class="table table-hover">
+           <tr>
+           <th>id</th>
+           <th>ServerName</th>
+            <th>Activated Timestamp</th>
+            </tr>
+
+          {% for row in kms%}
+          
+          <tr>
+           <td> {{row.id}} </td>
+           <td> {{row.hostname}} </td>
+           <td> {{row.date}} </td>
+         </tr>	 
+          
+	  {%   endfor  %}
+        </table>
+    </div>    
+
+    
+{% endblock %}
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+  $(function () {
+    $('.dw').on('click', function () {
+      $('#dw_s').val($('#dt_start').val());
+      $('#dw_e').val($('#dt_end').val());
+      $('#dw_i').val($('#idc').val());
+      $('#dw').submit();
+      return false;
+    });
+  })
+</script>
+
+
+
+</body>
+</html>

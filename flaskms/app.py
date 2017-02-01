@@ -9,14 +9,16 @@ from flask_wtf import Form
 from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import Required, Length
 from wtforms.fields.html5 import DateField
-import MySQLdb
 import time
+import requests 
 
 from flask.ext import excel
-
+from flask_paginate import Pagination
+from flask.ext.sqlalchemy import Pagination
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'top secret!'
+app.config['SECRET_KEY'] = 'top secret!123#098'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://ferozkhan:amiferoz69@localhost/server'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 bootstrap = Bootstrap(app)
@@ -33,35 +35,46 @@ class KmsForm(Form):
 
 
 
+class DBC(db.Model):
+    __tablename__ = 'kms'
+    id = db.Column(db.Integer, primary_key=True)
+    hostname = db.Column(db.String(500),unique=False)
+    date = db.Column(db.DateTime)
 
-@app.route("/", methods=['GET', 'POST'])
 
-def index():
+@app.route("/", defaults={'page': 1},methods=['GET', 'POST'])
+@app.route("/page/<int:page>/", methods=["GET", "POST"])
+
+def index(page):
 
     form = KmsForm()
     global kms
-    kms = []
-
-    if form.validate_on_submit(): #and form.idc.choices == 1:
-        db = MySQLdb.connect("localhost","ferozkhan","amiferoz69","server")
-        cur = db.cursor()
+    pagination = [] 
+    if form.validate_on_submit(): 
         if form.idc.data == '1':
-            cur.execute ("SELECT  * from kms  where hostname regexp '[1][0-9][0-9][0-9]$' OR hostname LIKE '%%jp2v'  and date between '%s' and '%s' " %(form.dt_start.data , form.dt_end.data)  )
-
+          kms = DBC.query.filter(DBC.hostname.op('regexp')(r'[1][0-9][0-9][0-9]$')|DBC.hostname.like('%%jp2v') , DBC.date.between (form.dt_start.data , form.dt_end.data ))
+          pagination = kms.paginate(page, 20)
+	       
         else:
-            cur.execute( "SELECT * from kms where date between '%s' and '%s' " %(form.dt_start.data  , form.dt_end.data ) )
-        
-        kms = list(cur.fetchall())
-      
-    return render_template('index.html' , form=form , kms=kms)
+          kms = DBC.query.filter(DBC.date.between ( form.dt_start.data , form.dt_end.data  ))
+          pagination = kms.paginate(page, 20)
+
+    return render_template('index.html' , form=form , pagination=pagination)
+
+
+
+
+##Download the Excel formated file from the data inputed in Form method 
+##By usning global variable KMS
 
 @app.route('/download')
 def download():
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
-
     global kms
-    output = excel.make_response_from_array(kms, 'csv')
+    data =  kms.all()
+    column_names =['id' , 'hostname' , 'date']
+    output = excel.make_response_from_query_sets(data, column_names, 'csv')
     output.headers["Content-Disposition"] = "attachment; filename=kms"+timestr+".csv"
     output.headers["Content-type"] = "text/csv"
     return output
