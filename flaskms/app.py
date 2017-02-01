@@ -41,11 +41,11 @@ class DBC(db.Model):
     hostname = db.Column(db.String(500),unique=False)
     date = db.Column(db.DateTime)
 
+@app.route('/', methods=['GET', 'POST'])
+@app.route("/index", methods=['GET', 'POST'])
+@app.route("/index/<int:page>", methods=["GET", "POST"])
 
-@app.route("/", defaults={'page': 1},methods=['GET', 'POST'])
-@app.route("/<int:page>/", methods=["GET", "POST"])
-
-def index(page):
+def index(page=1):
 
     form = KmsForm()
     global kms
@@ -54,11 +54,11 @@ def index(page):
     if form.validate_on_submit(): 
         if form.idc.data == '1':
           kms = DBC.query.filter(DBC.hostname.op('regexp')(r'[1][0-9][0-9][0-9]$')|DBC.hostname.like('%%jp2v') , DBC.date.between (form.dt_start.data , form.dt_end.data ))
-          pagination = kms.paginate(page, 20)
+          pagination = kms.paginate(page, 20, False)
 	       
         else:
           kms = DBC.query.filter(DBC.date.between ( form.dt_start.data , form.dt_end.data  ))
-          pagination = kms.paginate(page, 20)
+          pagination = kms.paginate(page, 20, False)
 
     return render_template('index.html' , form=form , pagination=pagination)
 
