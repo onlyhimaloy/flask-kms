@@ -42,8 +42,8 @@ class DBC(db.Model):
     date = db.Column(db.DateTime)
 
 @app.route('/', methods=['GET', 'POST'])
-@app.route("/index", methods=['GET', 'POST'])
-@app.route("/index/<int:page>", methods=["GET", "POST"])
+@app.route("/index", methods=['GET'])
+@app.route("/index/<int:page>", methods=["GET"])
 
 def index(page=1):
 
