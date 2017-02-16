@@ -13,3 +13,6 @@ pip install flask flask-bootstrap flask-wtf Flask-MySQLdb pymysql uwsgi
 pip install SQLAlchemy
 pip install flask_sqlalchemy
 pip install flask-paginate
+
+
+http://qiita.com/morinokami/items/e0efb2ae2aa04a1b148b
